@@ -1,0 +1,61 @@
+#!/bin/bash
+
+[ $# -lt 1 ] && echo "Need input" && exit 1
+
+directions=($(sed 's/\^/+0,+1 /g' $1 | sed 's/v/+0,-1 /g' | \
+  sed 's/>/+1,+0 /g' | sed 's/</-1,+0 /g'))
+
+new=1
+
+# santa
+visited=(0,0)
+cur_x=0
+cur_y=0
+for i in $(seq 0 2 ${#directions[@]})
+do
+  d=($(echo ${directions[$i]} | sed 's/,/ /g'))
+  cur_x=$[cur_x${d[0]}]
+  cur_y=$[cur_y${d[1]}]
+
+  found=0
+  cur="$cur_x,$cur_y"
+  for vis in ${visited[@]}
+  do
+    if [ $vis == "$cur" ]; then
+      found=1
+      break
+    fi
+  done
+
+  if [ $found == 0 ]; then
+    visited+=($cur)
+    new=$[new+1]
+  fi
+done
+
+# robo santa
+cur_x=0
+cur_y=0
+for i in $(seq 1 2 ${#directions[@]})
+do
+  d=($(echo ${directions[$i]} | sed 's/,/ /g'))
+  cur_x=$[cur_x${d[0]}]
+  cur_y=$[cur_y${d[1]}]
+
+  found=0
+  cur="$cur_x,$cur_y"
+  for vis in ${visited[@]}
+  do
+    if [ $vis == "$cur" ]; then
+      found=1
+      break
+    fi
+  done
+
+  if [ $found == 0 ]; then
+    visited+=($cur)
+    new=$[new+1]
+  fi
+done
+
+echo $new
