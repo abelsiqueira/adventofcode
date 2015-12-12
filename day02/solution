@@ -18,5 +18,8 @@ do
   #echo "  $min"
   #echo "  $[2*(A1+A2+A3)+min]"
   sum=$[sum+2*(A1+A2+A3)+min]
+
+  mins=($(echo "$a $b $c" | xargs printf "%s\n" | sort -g | xargs echo))
+  ribbon=$[ribbon+a*b*c+2*(${mins[0]}+${mins[1]})]
 done < $1
-echo $sum
+echo $sum $ribbon
