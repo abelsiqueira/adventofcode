@@ -1,4 +1,16 @@
 #!/bin/bash
 
 [ $# -lt 1 ] && echo "Need file" && exit 1
-echo "0$(sed 's/(/+1/g' $1 | sed 's/)/-1/g')" | bc
+
+str=($(sed 's/(/+1 /g' $1 | sed 's/)/-1 /g'))
+sum=0
+found=0
+for i in $(seq 0 $((${#str[@]}-1)) )
+do
+  sum=$((sum${str[$i]}))
+  if [ $found == "0" -a $sum -lt 0 ]; then
+    echo $((i+1))
+    found=1
+  fi
+done
+echo $sum
