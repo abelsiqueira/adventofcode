@@ -1,0 +1,40 @@
+#!/bin/bash
+
+[ $# -lt 1 ] && echo "Need input" && exit 1
+
+lights=( $(for i in {1..1000000}; do echo 0; done) )
+
+while read line
+do
+  line=$(echo $line | sed 's/turn /turn/')
+  if echo $line | grep "on" > /dev/null; then
+    turn=1
+  elif echo $line | grep "off" > /dev/null; then
+    turn=0
+  else
+    turn=-1
+  fi
+
+  a=($(echo $line | cut -d" " -f2 | sed 's/,/ /'))
+  b=($(echo $line | cut -d" " -f4 | sed 's/,/ /'))
+
+  for i in $(seq ${a[0]} ${b[0]}); do
+    for j in $(seq ${a[1]} ${b[1]}); do
+      k=$[$i*1000+$j]
+      if [ $turn == "-1" ]; then
+        v=lights[$k]
+        lights[$k]=$[1-v]
+      else
+        lights[$k]=$turn
+      fi
+    done
+  done
+done < $1
+
+
+sum=0
+for i in $(seq 0 $((${#lights[@]}-1)))
+do
+  sum=$[sum+${lights[$i]}]
+done
+echo $sum
