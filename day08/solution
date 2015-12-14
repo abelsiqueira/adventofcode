@@ -1,0 +1,15 @@
+#!/bin/bash
+
+[ $# -lt 1 ] && echo "Need input" && exit 1
+
+sum1=0
+sum2=0
+for line in $(cat $1)
+do
+  n=$((${#line}-2))
+  s=$(echo ${line:1:$n} | sed 's/\\\\/|/g' | sed 's/\\x../_/g' | sed 's/\\"/-/g')
+  e=\"$(echo $line | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')\"
+  sum1=$[sum1+${#line}-${#s}]
+  sum2=$[sum2+${#e}-${#line}]
+done
+echo $sum1 $sum2
